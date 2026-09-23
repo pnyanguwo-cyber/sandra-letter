@@ -59,12 +59,16 @@
 
   /* The scene NEVER sits still: a perpetual slow Lissajous sway runs
      every frame, layered with pointer/device tilt and chapter pulses.
-     Smoothing is done here (lerp), so CSS needs no transition. */
+     Smoothing is done here (lerp), so CSS needs no transition.
+     On small screens the sway rate halves (HALF_RATE) so the rig's
+     per-frame style writes stay cheap on mid-range phones. */
+  var HALF_RATE = Math.min(innerWidth, innerHeight) < 720 ? 0.5 : 1;
+
   function sceneLoop(now) {
     if (!el.tilt) return;
     var t = now / 1000;
-    var swayX = Math.sin(t * 0.45) * 0.9 + Math.sin(t * 0.13) * 0.7;
-    var swayY = Math.cos(t * 0.34) * 1.1 + Math.sin(t * 0.21) * 0.6;
+    var swayX = Math.sin(t * 0.45 * HALF_RATE) * 0.9 + Math.sin(t * 0.13 * HALF_RATE) * 0.7;
+    var swayY = Math.cos(t * 0.34 * HALF_RATE) * 1.1 + Math.sin(t * 0.21 * HALF_RATE) * 0.6;
 
     var pulse = 0;
     if (now < pulseUntil) {
@@ -141,7 +145,11 @@
       canvas.style.height = innerHeight + "px";
 
       var base = Math.min(130, Math.max(42, Math.round((innerWidth * innerHeight) / 11000)));
-      if (window.matchMedia("(min-width: 720px)").matches) base = Math.round(base * 1.3);
+      if (window.matchMedia("(min-width: 720px)").matches) {
+        base = Math.round(base * 1.3);
+      } else {
+        base = Math.round(base * 0.7);   // ~30% fewer particles on phones
+      }
       particles = [];
 
       PLANES.forEach(function (pl, pi) {
@@ -360,6 +368,14 @@
   var chapterIndex = -1;
   var locked = false;           // one transition at a time
 
+  /* Ghost photo switch: her.png through part 3, poster from part 4 on.
+     is-cover doubles as "her photo" state (splash AND parts 1–3). */
+  var HER_UNTIL = 4;            // poster starts at this part number
+
+  function photoClassFor(partNum) {
+    return partNum >= HER_UNTIL ? "mem-poster" : "is-cover";
+  }
+
   function buildChapters() {
     chapters.forEach(function (sec, i) {
       var node = document.createElement("section");
@@ -412,7 +428,7 @@
       setTimeout(function () { prev.classList.remove("is-leaving", "is-leaving--back"); }, 800);
     }
 
-    document.body.className = "no-scroll " + sec.tone;
+    document.body.className = "no-scroll " + sec.tone + " " + photoClassFor(i + 1);
     updateHud(i);
 
     // Re-entry: replay the line stagger. Snap lines to their hidden base
@@ -454,7 +470,7 @@
       setTimeout(function () { node.classList.remove("is-leaving"); }, 800);
     }
 
-    document.body.className = "no-scroll tone-end";
+    document.body.className = "no-scroll tone-end mem-poster";
     clearTimeout(nextTimer);
     el.next.classList.remove("is-shown");
     el.hud.classList.remove("is-shown");
@@ -561,7 +577,7 @@
     document.body.classList.add("is-cover");
     el.next.classList.remove("is-shown");
     el.hud.classList.remove("is-shown");
-    document.body.className = "no-scroll";
+    document.body.className = "no-scroll is-cover";
     el.cover.classList.remove("is-hidden");
     el.begin.focus({ preventScroll: true });
   }
@@ -641,6 +657,7 @@
   /* ---------- boot ---------- */
   buildChapters();
   el.label.textContent = pad(1) + " / " + pad(total);   // real count from content.js
+  document.body.classList.add("is-cover");   // her photo faded in before the intro lifts
   initTilt();     // scene rig first — the intro already sits inside it
   initStars();
   runIntro();

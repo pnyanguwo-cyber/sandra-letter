@@ -827,49 +827,47 @@ body.is-closed .hud {
   z-index: 2;
   pointer-events: none;
   overflow: hidden;
+  opacity: 0;                          /* visible only via body class */
   transition: opacity 2.8s var(--ease);
 }
 
 .memory img {
   position: absolute;
-  width: 135%;
-  height: auto;
+  top: 50%;
+  left: 50%;
+  min-width: 135%;
   min-height: 135%;
+  width: auto;
+  height: auto;
   object-fit: cover;
+  transform: translate(-50%, -50%) rotate(var(--rot, 0deg));
   filter: grayscale(0.55) brightness(0.8) contrast(0.92);
   will-change: transform;
 }
 
-/* splash (cover): her.png — slides left → right */
-.memory--her { opacity: 0.09; }
-.memory--her img {
-  top: -14%;
-  left: -18%;
-  transform: rotate(-3deg);
-  animation: mem-slide-her 58s ease-in-out infinite alternate;
+/* her.png: splash through part 3 (body.is-cover) — slides left → right */
+.memory--her { --rot: -3deg; }
+body.is-cover .memory--her { opacity: 0.09; }
+body.is-cover .memory--her img {
+  animation: mem-slide-her 58s linear infinite alternate;
 }
 
-/* every letter page: the poster portrait */
-.memory--poster { opacity: 0.09; }
-.memory--poster img {
-  top: -16%;
-  right: -14%;
-  left: auto;
-  transform: rotate(2.5deg);
-  animation: mem-slide-poster 54s ease-in-out infinite alternate;
+/* poster: part 4 onward (body.mem-poster) */
+.memory--poster { --rot: 2.5deg; }
+body.mem-poster .memory--poster { opacity: 0.09; }
+body.mem-poster .memory--poster img {
+  animation: mem-slide-poster 54s linear infinite alternate;
 }
 
-/* poster hides while the splash is up */
-.is-cover .memory--poster { opacity: 0; }
-
+/* slide via margin so it composes with the centered base transform */
 @keyframes mem-slide-her {
-  from { transform: rotate(-3deg) translate3d(0, 0, 0) scale(1); }
-  to   { transform: rotate(-3deg) translate3d(14%, -3%, 0) scale(1.08); }   /* left → right */
+  from { margin-left: -6%; }
+  to   { margin-left: 5%; }
 }
 
 @keyframes mem-slide-poster {
-  from { transform: rotate(2.5deg) translate3d(0, 0, 0) scale(1.06); }
-  to   { transform: rotate(2.5deg) translate3d(-5%, 3.5%, 0) scale(1); }
+  from { margin-top: -2.5%; }
+  to   { margin-top: 2%; }
 }
 
 /* ============================================================
@@ -948,6 +946,22 @@ body.is-closed .hud {
 @keyframes eq {
   0%, 100% { transform: scaleY(0.45); }
   50%      { transform: scaleY(1); }
+}
+
+/* ============================================================
+   Mobile performance — cheaper effects on small screens
+   (backdrop-filter and huge blurs are the two big GPU costs)
+   ============================================================ */
+@media (max-width: 719px) {
+  .pane--glass {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.01) 55%);
+  }
+
+  .pane--nebula { filter: blur(34px); }        /* 56px → 34px */
+  .grain { opacity: 0.04; }
+  .memory img { filter: grayscale(0.55) brightness(0.8); }  /* drop contrast() */
 }
 
 /* ============================================================

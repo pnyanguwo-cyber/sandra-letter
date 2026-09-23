@@ -13,6 +13,7 @@
 
   <link rel="preload" href="fonts/newsreader.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="fonts/jost.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="public/images/her-ghost.webp" as="image" fetchpriority="high" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -32,10 +33,10 @@
 
   <!-- ghost photographs · 9% opacity, always sliding -->
   <div class="memory memory--her" aria-hidden="true">
-    <img src="public/images/her.png" alt="" loading="eager" decoding="async" />
+    <img src="public/images/her-ghost.webp" alt="" decoding="async" fetchpriority="high" />
   </div>
   <div class="memory memory--poster" aria-hidden="true">
-    <img src="public/images/gta_vi_poster.webp" alt="" loading="lazy" decoding="async" />
+    <img src="public/images/poster-ghost.webp" alt="" loading="lazy" decoding="async" />
   </div>
 
   <!-- 1. Intro boot sequence -->
@@ -88,7 +89,7 @@
   </button>
 
   <!-- The song — starts on her first Continue, plays once to the end -->
-  <audio id="song" src="public/music/letter-song.mp3" preload="auto"></audio>
+  <audio id="song" src="public/music/letter-song.mp3" preload="none"></audio>
 
   <noscript>
     <p style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:2rem;text-align:center;color:#a8a39b;font-family:Georgia,serif;font-style:italic;line-height:1.7">
