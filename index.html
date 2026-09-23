@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#08090d" />
+  <title>For Sandra</title>
+  <meta name="description" content="A short, honest letter, meant to be said properly." />
+
+  <meta property="og:title" content="For Sandra" />
+  <meta property="og:description" content="There are some things I've been meaning to say properly." />
+  <meta name="robots" content="noindex, nofollow" />
+
+  <link rel="preload" href="fonts/newsreader.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="fonts/jost.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- 3D scene: perspective tilt → layered depth planes (nebula, glass, dust) -->
+  <div class="scene" aria-hidden="true">
+    <div class="scene__tilt" id="tilt">
+      <div class="layer layer--nebula"><div class="pane pane--nebula"></div></div>
+      <div class="layer layer--glass-a"><div class="pane pane--glass"></div></div>
+      <div class="layer layer--glass-b"><div class="pane pane--glass"></div></div>
+      <div class="layer layer--glass-c"><div class="pane pane--glass"></div></div>
+      <canvas id="stars"></canvas>
+    </div>
+  </div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <div id="tone" aria-hidden="true"></div>
+
+  <!-- ghost photographs · 9% opacity, always sliding -->
+  <div class="memory memory--her" aria-hidden="true">
+    <img src="public/images/her.png" alt="" loading="eager" decoding="async" />
+  </div>
+  <div class="memory memory--poster" aria-hidden="true">
+    <img src="public/images/gta_vi_poster.webp" alt="" loading="lazy" decoding="async" />
+  </div>
+
+  <!-- 1. Intro boot sequence -->
+  <div id="intro" class="intro" aria-hidden="true">
+    <div class="intro__dot" aria-hidden="true"></div>
+    <div class="intro__title">Sandy.</div>
+    <div class="intro__sub">There&rsquo;s something I&rsquo;ve been meaning to say.</div>
+  </div>
+
+  <!-- 2. Opening screen -->
+  <main id="stage" aria-live="off">
+    <section id="cover" class="cover" aria-label="Opening">
+      <p class="cover__eyebrow">a short letter</p>
+      <h1 class="cover__title">For Sandra&nbsp;Sol</h1>
+      <p class="cover__sub">There are some things I&rsquo;ve been meaning to say&nbsp;properly.</p>
+      <div class="cover__actions">
+        <button id="begin" class="btn" type="button">Continue <span class="btn__arrow" aria-hidden="true">&rarr;</span></button>
+      </div>
+      <div class="cover__hint" aria-hidden="true">tap the screen, or use the arrow keys</div>
+      <p id="skipnote" class="skipnote" hidden>take all the time you need. it&rsquo;s completely okay to leave whenever you want.</p>
+    </section>
+  </main>
+
+  <!-- 3. Progress -->
+  <div id="hud" class="hud" aria-hidden="true">
+    <div id="progress-track"><div id="progress-bar"></div></div>
+    <div id="progress-label">&mdash;</div>   <!-- filled from content.js -->
+  </div>
+
+  <!-- 4. Continue button (chapter screens) -->
+  <button id="next" class="nextbtn" type="button" aria-label="Continue to the next part">Continue <span class="btn__arrow" aria-hidden="true">&rarr;</span></button>
+
+  <!-- 5. End screen -->
+  <section id="ending" class="ending" aria-label="Closing" hidden>
+    <p class="ending__line" id="end-1">That&rsquo;s all I wanted to say.</p>
+    <p class="ending__wish" id="end-wish">The truth is, I really want you to come&nbsp;back.</p>
+    <p class="ending__name" id="end-2">Take care, Sandra.</p>
+    <p class="ending__sig">Panashe</p>
+    <div class="ending__actions">
+      <button id="close" class="btn" type="button">Close</button>
+      <a class="btn btn--gold" href="https://wa.me/263773791864" rel="noopener">Text Me</a>
+    </div>
+    <span id="close-error" class="ending__error" role="status" hidden>error, try the other button.</span>
+    <p class="ending__contact" id="end-contact">No reply is expected. No pressure. That&rsquo;s the point.</p>
+  </section>
+
+  <!-- Ambient sound — completely optional, off by default -->
+  <button id="sound" class="soundbtn" type="button" aria-pressed="false" aria-label="Play ambient sound">
+    <span class="soundbtn__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+  </button>
+
+  <!-- The song — starts on her first Continue, plays once to the end -->
+  <audio id="song" src="public/music/letter-song.mp3" preload="auto"></audio>
+
+  <noscript>
+    <p style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:2rem;text-align:center;color:#a8a39b;font-family:Georgia,serif;font-style:italic;line-height:1.7">
+      This letter needs JavaScript to open.<br>
+      Please enable it and reload.
+    </p>
+  </noscript>
+  <script src="content.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
